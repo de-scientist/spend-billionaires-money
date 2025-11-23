@@ -10,7 +10,7 @@ const { items, money } = useStore();
 return (
 <div>
 
-<div className="text-center text-xl font-bold bg-green-700 text-white py-3">
+<div className="sticky top-0 text-center text-xl font-bold bg-green-700 text-white py-3">
 Current balance: ${money.toLocaleString()}
 </div>
 
