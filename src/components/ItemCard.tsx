@@ -24,7 +24,7 @@ export default function ItemCard({
   const cannotSell = count === 0;
 
   return (
-    <div className="px-3"> {/* <-- Added horizontal padding */}
+    <div className="px-1"> {/* <-- Added horizontal padding */}
       <div className="border rounded-xl p-4 shadow-lg bg-white flex flex-col items-center transition-transform hover:scale-[1.02]">
         <img
           src={image}
