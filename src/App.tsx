@@ -22,7 +22,7 @@ export default function App() {
 
       <Navbar onShowReceipt={() => setReceiptOpen(true)} />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-50">
         {items.map((i) => (
           <ItemCard key={i.id} {...i} />
         ))}
