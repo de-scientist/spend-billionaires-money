@@ -4,10 +4,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Spinner } from "@/components/ui/spinner"; // import Spinner from shadcn/ui
+import { Spinner } from "@/components/ui/spinner";
 import jsPDF from "jspdf";
 import { useStore } from "@/store/useStore";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // <-- React Router
 
 interface Item {
   id: number;
@@ -27,8 +28,10 @@ export default function Receipt({
 }) {
   const items: Item[] = useStore((s) => s.items);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // <-- hook for navigation
 
-  const grandTotal = items.reduce((acc, i) => acc + i.count * i.price, 0);
+  const purchasedItems = items.filter((i) => i.count > 0);
+  const grandTotal = purchasedItems.reduce((acc, i) => acc + i.count * i.price, 0);
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("en-US", {
@@ -52,6 +55,7 @@ export default function Receipt({
   };
 
   const downloadPDF = async () => {
+    if (purchasedItems.length === 0) return;
     setLoading(true);
     const doc = new jsPDF();
     const pageHeight = doc.internal.pageSize.height;
@@ -68,7 +72,7 @@ export default function Receipt({
 
     const images: Record<number, string | null> = {};
     await Promise.all(
-      items.map(async (i) => {
+      purchasedItems.map(async (i) => {
         if (i.count > 0 && i.image) {
           images[i.id] = await loadImageAsBase64(i.image);
         } else {
@@ -92,7 +96,7 @@ export default function Receipt({
     drawHeader();
     let rowIndex = 0;
 
-    for (const i of items.filter((item) => item.count > 0)) {
+    for (const i of purchasedItems) {
       if (y + rowHeight > pageHeight - 20) {
         doc.addPage();
         y = 20;
@@ -122,7 +126,7 @@ export default function Receipt({
     if (y + 20 > pageHeight - 20) doc.addPage();
     y += 5;
     doc.setFontSize(14);
-    doc.setFont( "bold");
+    doc.setFont("bold");
     doc.text(`Grand Total: ${formatCurrency(grandTotal)}`, 10, y + 10);
 
     doc.save("receipt.pdf");
@@ -137,50 +141,67 @@ export default function Receipt({
           List of items purchased, quantity, price, and total.
         </DialogDescription>
 
-        <div className="space-y-3 max-h-80 overflow-auto">
-          {items
-            .filter((i) => i.count > 0)
-            .map((i) => (
-              <div
-                key={i.id}
-                className="flex items-center justify-between gap-4 border-b pb-2"
-              >
-                <img
-                  src={i.image}
-                  alt={i.name}
-                  className="w-12 h-12 object-cover rounded"
-                />
-                <div className="flex-1">
-                  <div className="font-semibold">{i.name}</div>
-                  {i.description && (
-                    <div className="text-sm text-gray-500">{i.description}</div>
-                  )}
-                  <div className="text-sm text-gray-500">
-                    Price: {formatCurrency(i.price)}
+        {purchasedItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <div className="text-center text-lg font-semibold text-gray-700">
+              You don&apos;t have anything yet!
+            </div>
+            <button
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              onClick={() => {
+                onClose();
+                navigate("/"); // <-- redirect to homepage / item cards page
+              }}
+            >
+              Shop Now
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="space-y-3 max-h-80 overflow-auto">
+              {purchasedItems.map((i) => (
+                <div
+                  key={i.id}
+                  className="flex items-center justify-between gap-4 border-b pb-2"
+                >
+                  <img
+                    src={i.image}
+                    alt={i.name}
+                    className="w-12 h-12 object-cover rounded"
+                  />
+                  <div className="flex-1">
+                    <div className="font-semibold">{i.name}</div>
+                    {i.description && (
+                      <div className="text-sm text-gray-500">{i.description}</div>
+                    )}
+                    <div className="text-sm text-gray-500">
+                      Price: {formatCurrency(i.price)}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Quantity: {i.count}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    Quantity: {i.count}
+                  <div className="font-bold">
+                    {formatCurrency(i.count * i.price)}
                   </div>
                 </div>
-                <div className="font-bold">
-                  {formatCurrency(i.count * i.price)}
-                </div>
-              </div>
-            ))}
-        </div>
+              ))}
+            </div>
 
-        <div className="font-bold text-right mt-4 text-lg">
-          Grand Total: {formatCurrency(grandTotal)}
-        </div>
+            <div className="font-bold text-right mt-4 text-lg">
+              Grand Total: {formatCurrency(grandTotal)}
+            </div>
 
-        <button
-          className="mt-4 bg-black text-white px-4 py-2 rounded flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          onClick={downloadPDF}
-          disabled={loading}
-        >
-          {loading && <Spinner className="w-5 h-5 animate-pulse" />}
-          {loading ? "Generating PDF..." : "Download PDF"}
-        </button>
+            <button
+              className="mt-4 bg-black text-white px-4 py-2 rounded flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              onClick={downloadPDF}
+              disabled={loading}
+            >
+              {loading && <Spinner className="w-5 h-5 animate-pulse" />}
+              {loading ? "Generating PDF..." : "Download PDF"}
+            </button>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
