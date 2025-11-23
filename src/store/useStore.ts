@@ -10,13 +10,22 @@ count: number;
 }
 
 
-interface StoreState {
-balance: number;
-items: Item[];
-buy: (id: number) => void;
-sell: (id: number) => void;
-reset: () => void;
+export interface StoreState {
+  money: number;
+  items: Item[];
+  buy: (id: number) => void;
+  sell: (id: number) => void;
+  reset: () => void;
+
+  profile: {
+    name: string;
+    avatar: string;
+  };
+
+  setAvatar: (avatar: string) => void;
+  setName: (name: string) => void;
 }
+
 
 
 export const useStore = create<StoreState>((set) => ({
@@ -51,4 +60,20 @@ set((state) => ({
 balance: 456_000_000_000,
 items: state.items.map((i) => ({ ...i, count: 0 })),
 })),
+
+profile: {
+  name: "Visitor",
+  avatar: "/avatars/default.png",
+},
+
+setAvatar: (avatar) =>
+  set((state) => ({
+    profile: { ...state.profile, avatar },
+  })),
+
+setName: (name) =>
+  set((state) => ({
+    profile: { ...state.profile, name },
+  })),
+
 }));
