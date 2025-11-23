@@ -9,7 +9,12 @@ const sell = useStore((s) => s.sell);
 
 return (
 <div className="border rounded-xl p-4 shadow bg-white">
-<img src={image} className="w-full h-48 object-cover rounded" />
+<img
+  src={image}
+  alt={name} 
+  className="w-full h-48 object-cover rounded"
+/>
+
 <h2 className="text-lg font-semibold mt-3">{name}</h2>
 <p className="text-green-600 font-bold">${price.toLocaleString()}</p>
 
