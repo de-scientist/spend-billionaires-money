@@ -34,7 +34,7 @@ export const useStore = create<StoreState>((set) => ({
     { id: 3, name: "Gaming PC", price: 3200, image: "/items/pc.jpg", count: 0 },
     { id: 4, name: "Private Jet", price: 45_000_000, image: "/items/Private Jet.jpg", count: 0 },
     { id: 5, name: "Yacht", price: 25_000_000, image: "/items/Yachts.jpg", count: 0 },
-    { id: 6, name: "Mansion", price: 120_000_000, image: "/items/mansion.jpg", count: 0 },
+    { id: 6, name: "Mansion", price: 120_000_000, image: "/items/Mansions.jpg", count: 0 },
     { id: 7, name: "Supercar", price: 350_000, image: "/items/supercar.jpg", count: 0 },
     { id: 8, name: "Helicopter", price: 8_000_000, image: "/items/helicopter.jpg", count: 0 },
     { id: 9, name: "Motorbike", price: 18_000, image: "/items/bike.jpg", count: 0 },
