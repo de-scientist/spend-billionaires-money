@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner"; // import Spinner from shadcn/ui
 import jsPDF from "jspdf";
 import { useStore } from "@/store/useStore";
@@ -13,14 +18,23 @@ interface Item {
   description?: string;
 }
 
-export default function Receipt({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function Receipt({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const items: Item[] = useStore((s) => s.items);
   const [loading, setLoading] = useState(false);
 
   const grandTotal = items.reduce((acc, i) => acc + i.count * i.price, 0);
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(value);
 
   const loadImageAsBase64 = async (url: string): Promise<string | null> => {
     try {
@@ -60,7 +74,7 @@ export default function Receipt({ open, onClose }: { open: boolean; onClose: () 
         } else {
           images[i.id] = null;
         }
-      })
+      }),
     );
 
     const drawHeader = () => {
@@ -108,7 +122,7 @@ export default function Receipt({ open, onClose }: { open: boolean; onClose: () 
     if (y + 20 > pageHeight - 20) doc.addPage();
     y += 5;
     doc.setFontSize(14);
-    doc.setFont(undefined, "bold");
+    doc.setFont( "bold");
     doc.text(`Grand Total: ${formatCurrency(grandTotal)}`, 10, y + 10);
 
     doc.save("receipt.pdf");
@@ -124,18 +138,35 @@ export default function Receipt({ open, onClose }: { open: boolean; onClose: () 
         </DialogDescription>
 
         <div className="space-y-3 max-h-80 overflow-auto">
-          {items.filter((i) => i.count > 0).map((i) => (
-            <div key={i.id} className="flex items-center justify-between gap-4 border-b pb-2">
-              <img src={i.image} alt={i.name} className="w-12 h-12 object-cover rounded" />
-              <div className="flex-1">
-                <div className="font-semibold">{i.name}</div>
-                {i.description && <div className="text-sm text-gray-500">{i.description}</div>}
-                <div className="text-sm text-gray-500">Price: {formatCurrency(i.price)}</div>
-                <div className="text-sm text-gray-500">Quantity: {i.count}</div>
+          {items
+            .filter((i) => i.count > 0)
+            .map((i) => (
+              <div
+                key={i.id}
+                className="flex items-center justify-between gap-4 border-b pb-2"
+              >
+                <img
+                  src={i.image}
+                  alt={i.name}
+                  className="w-12 h-12 object-cover rounded"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold">{i.name}</div>
+                  {i.description && (
+                    <div className="text-sm text-gray-500">{i.description}</div>
+                  )}
+                  <div className="text-sm text-gray-500">
+                    Price: {formatCurrency(i.price)}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Quantity: {i.count}
+                  </div>
+                </div>
+                <div className="font-bold">
+                  {formatCurrency(i.count * i.price)}
+                </div>
               </div>
-              <div className="font-bold">{formatCurrency(i.count * i.price)}</div>
-            </div>
-          ))}
+            ))}
         </div>
 
         <div className="font-bold text-right mt-4 text-lg">
@@ -143,14 +174,13 @@ export default function Receipt({ open, onClose }: { open: boolean; onClose: () 
         </div>
 
         <button
-  className="mt-4 bg-black text-white px-4 py-2 rounded flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-  onClick={downloadPDF}
-  disabled={loading}
->
-  {loading && <Spinner className="w-5 h-5 animate-pulse" />}
-  {loading ? "Generating PDF..." : "Download PDF"}
-</button>
-
+          className="mt-4 bg-black text-white px-4 py-2 rounded flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+          onClick={downloadPDF}
+          disabled={loading}
+        >
+          {loading && <Spinner className="w-5 h-5 animate-pulse" />}
+          {loading ? "Generating PDF..." : "Download PDF"}
+        </button>
       </DialogContent>
     </Dialog>
   );

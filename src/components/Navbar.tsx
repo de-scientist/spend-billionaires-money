@@ -20,7 +20,10 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => alert("Spend functionality")}>
+          <Button
+            variant="outline"
+            onClick={() => alert("Spend functionality")}
+          >
             Spend
           </Button>
 
