@@ -1,14 +1,12 @@
 import { create } from "zustand";
 
-
 export interface Item {
-id: number;
-name: string;
-price: number;
-image: string;
-count: number;
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  count: number;
 }
-
 
 export interface StoreState {
   money: number;
@@ -26,54 +24,61 @@ export interface StoreState {
   setName: (name: string) => void;
 }
 
-
-
 export const useStore = create<StoreState>((set) => ({
-balance: 456_000_000_000,
-items: [], // populate dynamically
-buy: (id) =>
-set((state) => {
-const items = state.items.map((i) => {
-if (i.id === id && state.balance >= i.price) {
-return { ...i, count: i.count + 1 };
-}
-return i;
-});
-const selected = state.items.find((i) => i.id === id);
-return selected && state.balance >= selected.price
-? { items, balance: state.balance - selected.price }
-: state;
-}),
-sell: (id) =>
-set((state) => {
-const items = state.items.map((i) => {
-if (i.id === id && i.count > 0) return { ...i, count: i.count - 1 };
-return i;
-});
-const selected = state.items.find((i) => i.id === id);
-return selected && selected.count > 0
-? { items, balance: state.balance + selected.price }
-: state;
-}),
-reset: () =>
-set((state) => ({
-balance: 456_000_000_000,
-items: state.items.map((i) => ({ ...i, count: 0 })),
-})),
+  money: 456_000_000_000, // <-- FIXED
 
-profile: {
-  name: "Visitor",
-  avatar: "/avatars/default.png",
-},
+  items: [],
 
-setAvatar: (avatar) =>
-  set((state) => ({
-    profile: { ...state.profile, avatar },
-  })),
+  buy: (id) =>
+    set((state) => {
+      const selected = state.items.find((i) => i.id === id);
+      if (!selected) return state;
 
-setName: (name) =>
-  set((state) => ({
-    profile: { ...state.profile, name },
-  })),
+      if (state.money < selected.price) return state; // Not enough money
 
+      const items = state.items.map((i) =>
+        i.id === id ? { ...i, count: i.count + 1 } : i
+      );
+
+      return {
+        items,
+        money: state.money - selected.price, // <-- FIXED
+      };
+    }),
+
+  sell: (id) =>
+    set((state) => {
+      const selected = state.items.find((i) => i.id === id);
+      if (!selected || selected.count === 0) return state;
+
+      const items = state.items.map((i) =>
+        i.id === id ? { ...i, count: i.count - 1 } : i
+      );
+
+      return {
+        items,
+        money: state.money + selected.price, // <-- FIXED
+      };
+    }),
+
+  reset: () =>
+    set((state) => ({
+      money: 456_000_000_000,
+      items: state.items.map((i) => ({ ...i, count: 0 })),
+    })),
+
+  profile: {
+    name: "Visitor",
+    avatar: "/avatars/default.png",
+  },
+
+  setAvatar: (avatar) =>
+    set((state) => ({
+      profile: { ...state.profile, avatar },
+    })),
+
+  setName: (name) =>
+    set((state) => ({
+      profile: { ...state.profile, name },
+    })),
 }));
