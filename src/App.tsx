@@ -10,8 +10,8 @@ const { items, money } = useStore();
 return (
 <div>
 
-<div className="sticky top-0 text-center text-xl font-bold bg-green-700 text-white py-3">
-Current balance: ${money.toLocaleString()}
+<div className="sticky top-0 text-center text-xl font-bold bg-green-700 text-white py-3 z-50">
+  Current balance: ${money.toLocaleString()}
 </div>
 
 <Navbar />
