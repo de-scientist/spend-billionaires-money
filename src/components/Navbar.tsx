@@ -1,7 +1,7 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import ResetConfirmation from "./ResetConfirmation";
+import ResetConfirmation from "@/components/ResetConfirmation";
 
 
 export default function Navbar() {
