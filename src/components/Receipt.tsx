@@ -29,10 +29,16 @@ export default function Receipt({ open, onClose, onShopNow }: ReceiptProps) {
   const [loading, setLoading] = useState(false);
 
   const purchasedItems = items.filter((i) => i.count > 0);
-  const grandTotal = purchasedItems.reduce((acc, i) => acc + i.count * i.price, 0);
+  const grandTotal = purchasedItems.reduce(
+    (acc, i) => acc + i.count * i.price,
+    0,
+  );
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(value);
 
   const loadImageAsBase64 = async (url: string): Promise<string | null> => {
     try {
@@ -69,7 +75,7 @@ export default function Receipt({ open, onClose, onShopNow }: ReceiptProps) {
     await Promise.all(
       purchasedItems.map(async (i) => {
         images[i.id] = i.image ? await loadImageAsBase64(i.image) : null;
-      })
+      }),
     );
 
     const drawHeader = () => {
@@ -163,14 +169,20 @@ export default function Receipt({ open, onClose, onShopNow }: ReceiptProps) {
                   <div className="flex-1">
                     <div className="font-semibold">{i.name}</div>
                     {i.description && (
-                      <div className="text-sm text-gray-500">{i.description}</div>
+                      <div className="text-sm text-gray-500">
+                        {i.description}
+                      </div>
                     )}
                     <div className="text-sm text-gray-500">
                       Price: {formatCurrency(i.price)}
                     </div>
-                    <div className="text-sm text-gray-500">Quantity: {i.count}</div>
+                    <div className="text-sm text-gray-500">
+                      Quantity: {i.count}
+                    </div>
                   </div>
-                  <div className="font-bold">{formatCurrency(i.count * i.price)}</div>
+                  <div className="font-bold">
+                    {formatCurrency(i.count * i.price)}
+                  </div>
                 </div>
               ))}
             </div>

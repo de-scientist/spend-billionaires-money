@@ -7,7 +7,7 @@ import Receipt from "@/components/Receipt";
 
 interface NavbarProps {
   onShowReceipt?: () => void; // optional callback
-  onShopNow?: () => void;     // callback for Receipt "Shop Now"
+  onShopNow?: () => void; // callback for Receipt "Shop Now"
 }
 
 export default function Navbar({ onShowReceipt, onShopNow }: NavbarProps) {
