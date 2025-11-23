@@ -5,7 +5,12 @@ import ResetConfirmation from "@/components/ResetConfirmation";
 import ProfileButton from "./ProfileButton";
 import Receipt from "@/components/Receipt"; // make sure the path is correct
 
-export default function Navbar() {
+interface NavbarProps {
+  onShowReceipt?: () => void; // optional callback
+}
+
+
+export default function Navbar({ onShowReceipt }: NavbarProps) {
   const [open, setOpen] = useState(false); // AC modal
   const [receiptOpen, setReceiptOpen] = useState(false); // Receipt modal
 

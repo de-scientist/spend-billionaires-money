@@ -8,7 +8,6 @@ import { Spinner } from "@/components/ui/spinner";
 import jsPDF from "jspdf";
 import { useStore } from "@/store/useStore";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // <-- React Router
 
 interface Item {
   id: number;
@@ -19,25 +18,21 @@ interface Item {
   description?: string;
 }
 
-export default function Receipt({
-  open,
-  onClose,
-}: {
+interface ReceiptProps {
   open: boolean;
   onClose: () => void;
-}) {
+  onShopNow: () => void; // new prop from App.tsx
+}
+
+export default function Receipt({ open, onClose, onShopNow }: ReceiptProps) {
   const items: Item[] = useStore((s) => s.items);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // <-- hook for navigation
 
   const purchasedItems = items.filter((i) => i.count > 0);
   const grandTotal = purchasedItems.reduce((acc, i) => acc + i.count * i.price, 0);
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(value);
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
 
   const loadImageAsBase64 = async (url: string): Promise<string | null> => {
     try {
@@ -73,12 +68,8 @@ export default function Receipt({
     const images: Record<number, string | null> = {};
     await Promise.all(
       purchasedItems.map(async (i) => {
-        if (i.count > 0 && i.image) {
-          images[i.id] = await loadImageAsBase64(i.image);
-        } else {
-          images[i.id] = null;
-        }
-      }),
+        images[i.id] = i.image ? await loadImageAsBase64(i.image) : null;
+      })
     );
 
     const drawHeader = () => {
@@ -150,7 +141,7 @@ export default function Receipt({
               className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
               onClick={() => {
                 onClose();
-                navigate("/"); // <-- redirect to homepage / item cards page
+                onShopNow(); // call the scroll-to-items callback
               }}
             >
               Shop Now
@@ -177,13 +168,9 @@ export default function Receipt({
                     <div className="text-sm text-gray-500">
                       Price: {formatCurrency(i.price)}
                     </div>
-                    <div className="text-sm text-gray-500">
-                      Quantity: {i.count}
-                    </div>
+                    <div className="text-sm text-gray-500">Quantity: {i.count}</div>
                   </div>
-                  <div className="font-bold">
-                    {formatCurrency(i.count * i.price)}
-                  </div>
+                  <div className="font-bold">{formatCurrency(i.count * i.price)}</div>
                 </div>
               ))}
             </div>
