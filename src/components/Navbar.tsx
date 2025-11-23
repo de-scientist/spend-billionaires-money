@@ -4,15 +4,16 @@ import { useState } from "react";
 import ResetConfirmation from "@/components/ResetConfirmation";
 import ProfileButton from "./ProfileButton";
 import Receipt from "@/components/Receipt"; // make sure the path is correct
+import { useNavigate } from "react-router-dom"; // if using react-router
 
 interface NavbarProps {
   onShowReceipt?: () => void; // optional callback
 }
 
-
 export default function Navbar({ onShowReceipt }: NavbarProps) {
   const [open, setOpen] = useState(false); // AC modal
   const [receiptOpen, setReceiptOpen] = useState(false); // Receipt modal
+  const navigate = useNavigate(); // for "Shop Now" redirect
 
   return (
     <>
@@ -47,7 +48,14 @@ export default function Navbar({ onShowReceipt }: NavbarProps) {
 
       {/* Modals */}
       <ResetConfirmation open={open} onClose={() => setOpen(false)} />
-      <Receipt open={receiptOpen} onClose={() => setReceiptOpen(false)} />
+      <Receipt
+        open={receiptOpen}
+        onClose={() => setReceiptOpen(false)}
+        onShopNow={() => {
+          setReceiptOpen(false); // close receipt
+          navigate("/"); // redirect to homepage / item cards
+        }}
+      />
     </>
   );
 }
