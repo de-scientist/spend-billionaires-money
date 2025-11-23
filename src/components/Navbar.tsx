@@ -3,17 +3,16 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import ResetConfirmation from "@/components/ResetConfirmation";
 import ProfileButton from "./ProfileButton";
-import Receipt from "@/components/Receipt"; // make sure the path is correct
-import { useNavigate } from "react-router-dom"; // if using react-router
+import Receipt from "@/components/Receipt";
 
 interface NavbarProps {
   onShowReceipt?: () => void; // optional callback
+  onShopNow?: () => void;     // callback for Receipt "Shop Now"
 }
 
-export default function Navbar({ onShowReceipt }: NavbarProps) {
+export default function Navbar({ onShowReceipt, onShopNow }: NavbarProps) {
   const [open, setOpen] = useState(false); // AC modal
   const [receiptOpen, setReceiptOpen] = useState(false); // Receipt modal
-  const navigate = useNavigate(); // for "Shop Now" redirect
 
   return (
     <>
@@ -33,7 +32,13 @@ export default function Navbar({ onShowReceipt }: NavbarProps) {
             Spend
           </Button>
 
-          <Button variant="outline" onClick={() => setReceiptOpen(true)}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setReceiptOpen(true);
+              if (onShowReceipt) onShowReceipt();
+            }}
+          >
             Receipt
           </Button>
 
@@ -53,7 +58,7 @@ export default function Navbar({ onShowReceipt }: NavbarProps) {
         onClose={() => setReceiptOpen(false)}
         onShopNow={() => {
           setReceiptOpen(false); // close receipt
-          navigate("/"); // redirect to homepage / item cards
+          if (onShopNow) onShopNow(); // call App's scroll/back callback
         }}
       />
     </>

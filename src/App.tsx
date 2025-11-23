@@ -1,19 +1,17 @@
-import { useRef, useState } from "react";
 import Navbar from "./components/Navbar";
 import ItemCard from "./components/ItemCard";
-import Receipt from "./components/Receipt";
 import { useStore } from "./store/useStore";
+import { useState } from "react";
+import Receipt from "./components/Receipt";
 
 export default function App() {
   const { items, money } = useStore();
   const [receiptOpen, setReceiptOpen] = useState(false);
-  const itemsRef = useRef<HTMLDivElement | null>(null);
 
-  // Scroll to the items grid
+  // Callback for "Shop Now" in Receipt
   const handleShopNow = () => {
-    if (itemsRef.current) {
-      itemsRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    setReceiptOpen(false); // close receipt modal
+    window.scrollTo({ top: 0, behavior: "smooth" }); // scroll to top where items are
   };
 
   return (
@@ -22,20 +20,19 @@ export default function App() {
         Current balance: ${money.toLocaleString()}
       </div>
 
-      <Navbar
-        onShowReceipt={() => setReceiptOpen(true)} // trigger receipt open
-      />
+      <Navbar onShowReceipt={() => setReceiptOpen(true)} />
 
-      <div ref={itemsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
         {items.map((i) => (
           <ItemCard key={i.id} {...i} />
         ))}
       </div>
 
+      {/* Receipt modal */}
       <Receipt
         open={receiptOpen}
         onClose={() => setReceiptOpen(false)}
-        onShopNow={handleShopNow} // pass callback for empty receipt
+        onShopNow={handleShopNow} // pass callback
       />
     </div>
   );
