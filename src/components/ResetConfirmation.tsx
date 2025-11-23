@@ -5,7 +5,7 @@ import { useStore } from "@/store/useStore";
 
 export default function ResetConfirmation({ open, onClose }: any) {
 const reset = useStore((s) => s.reset);
-const balance = useStore((s) => s.balance);
+const balance = useStore((s) => s.money);
 
 
 return (
