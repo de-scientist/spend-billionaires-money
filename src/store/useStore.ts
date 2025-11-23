@@ -1,5 +1,5 @@
 import { create } from "zustand";
-
+import { persist } from "zustand/middleware"; 
 export interface Item {
   id: number;
   name: string;
@@ -24,8 +24,11 @@ export interface StoreState {
   setName: (name: string) => void;
 }
 
-export const useStore = create<StoreState>((set) => ({
-  money: 456_000_000_000,
+// Wrap your existing store with persist
+export const useStore = create<StoreState>()(
+  persist(
+    (set) => ({
+      money: 456_000_000_000,
 
   items: [
     {
@@ -250,53 +253,63 @@ export const useStore = create<StoreState>((set) => ({
   ],
 
   buy: (id) =>
-    set((state) => {
-      const selected = state.items.find((i) => i.id === id);
-      if (!selected || state.money < selected.price) return state;
+        set((state) => {
+          const selected = state.items.find((i) => i.id === id);
+          if (!selected || state.money < selected.price) return state;
 
-      const items = state.items.map((i) =>
-        i.id === id ? { ...i, count: i.count + 1 } : i,
-      );
+          const items = state.items.map((i) =>
+            i.id === id ? { ...i, count: i.count + 1 } : i,
+          );
 
-      return {
-        items,
-        money: state.money - selected.price,
-      };
+          return {
+            items,
+            money: state.money - selected.price,
+          };
+        }),
+
+      sell: (id) =>
+        set((state) => {
+          const selected = state.items.find((i) => i.id === id);
+          if (!selected || selected.count === 0) return state;
+
+          const items = state.items.map((i) =>
+            i.id === id ? { ...i, count: i.count - 1 } : i,
+          );
+
+          return {
+            items,
+            money: state.money + selected.price,
+          };
+        }),
+
+      reset: () =>
+        set((state) => ({
+          money: 456_000_000_000,
+          items: state.items.map((i) => ({ ...i, count: 0 })),
+        })),
+
+      profile: {
+        name: "Visitor",
+        avatar: "/avatars/default.png",
+      },
+
+      setAvatar: (avatar) =>
+        set((state) => ({
+          profile: { ...state.profile, avatar },
+        })),
+
+      setName: (name) =>
+        set((state) => ({
+          profile: { ...state.profile, name },
+        })),
     }),
-
-  sell: (id) =>
-    set((state) => {
-      const selected = state.items.find((i) => i.id === id);
-      if (!selected || selected.count === 0) return state;
-
-      const items = state.items.map((i) =>
-        i.id === id ? { ...i, count: i.count - 1 } : i,
-      );
-
-      return {
-        items,
-        money: state.money + selected.price,
-      };
-    }),
-
-  reset: () =>
-    set((state) => ({
-      money: 456_000_000_000,
-      items: state.items.map((i) => ({ ...i, count: 0 })),
-    })),
-
-  profile: {
-    name: "Visitor",
-    avatar: "/avatars/default.png",
-  },
-
-  setAvatar: (avatar) =>
-    set((state) => ({
-      profile: { ...state.profile, avatar },
-    })),
-
-  setName: (name) =>
-    set((state) => ({
-      profile: { ...state.profile, name },
-    })),
-}));
+    {
+      name: "store-storage", // localStorage key
+      partialize: (state) => ({
+        money: state.money,
+        items: state.items,
+        profile: state.profile,
+      }),
+    }
+  )
+);
