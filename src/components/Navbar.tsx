@@ -21,7 +21,7 @@ export default function Navbar({ onShowReceipt, onShopNow }: NavbarProps) {
           <Avatar>
             <AvatarImage src="/elon.jpg" alt="Elon Musk" />
           </Avatar>
-          <h1 className="text-2xl font-bold">SPEND ELON'S MONEY</h1>
+          <h1 className="text-2xl font-bold">SPEND MY MONEY</h1>
         </div>
 
         <div className="flex items-center gap-4">
