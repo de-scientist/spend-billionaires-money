@@ -4,14 +4,14 @@ import { useStore } from "./store/useStore";
 
 
 export default function App() {
-const { items, balance } = useStore();
+const { items, money } = useStore();
 
 
 return (
 <div>
 
 <div className="text-center text-xl font-bold bg-green-700 text-white py-3">
-Current balance: ${balance.toLocaleString()}
+Current balance: ${money.toLocaleString()}
 </div>
 
 <Navbar />
