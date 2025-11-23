@@ -24,7 +24,7 @@ export default function ItemCard({
   const cannotSell = count === 0;
 
   return (
-    <div className="border rounded-xl p-4 shadow bg-white flex flex-col items-center">
+    <div className="border rounded-xl p-4 shadow-lg bg-white flex flex-col items-center transition-transform hover:scale-[1.02]">
       <img
         src={image}
         alt={name}
@@ -36,19 +36,29 @@ export default function ItemCard({
         <p className="text-lg text-green-600 font-semibold">
           ${price.toLocaleString()}
         </p>
-        <p className="text-base font-medium">Owned: {count}</p>
       </div>
 
-      <div className="flex items-center justify-between w-full mt-4">
+      <div className="flex items-center justify-between w-full mt-4 gap-3">
+        {/* Sell Button */}
         <Button
           onClick={() => sell(id)}
-          variant="secondary"
           disabled={cannotSell}
+          className={`flex-1 transition-all ${
+            count > 0 ? "bg-red-600 text-white hover:bg-red-700" : ""
+          }`}
         >
           Sell
         </Button>
 
-        <Button onClick={() => buy(id)} disabled={cannotBuy}>
+        {/* Count in the middle */}
+        <span className="text-xl font-bold text-center w-12">{count}</span>
+
+        {/* Buy Button */}
+        <Button
+          onClick={() => buy(id)}
+          disabled={cannotBuy}
+          className="flex-1 bg-green-600 text-white hover:bg-green-700 transition-all"
+        >
           Buy
         </Button>
       </div>
