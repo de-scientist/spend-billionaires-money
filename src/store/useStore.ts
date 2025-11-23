@@ -49,7 +49,7 @@ export const useStore = create<StoreState>((set) => ({
     { id: 18, name: "Private School", price: 40_000_000, image: "/items/school.jpg", count: 0 },
     { id: 19, name: "Hospital", price: 70_000_000, image: "/items/hospital.jpg", count: 0 },
     { id: 20, name: "Shopping Mall", price: 150_000_000, image: "/items/mall.jpg", count: 0 },
-    { id: 21, name: "iPhone 15 Pro", price: 1200, image: "/items/iphone.jpg", count: 0 },
+    { id: 21, name: "iPhone 17 Pro", price: 1200, image: "/items/iphone 17.jpg", count: 0 },
     { id: 22, name: "Camera", price: 2700, image: "/items/camera.jpg", count: 0 },
     { id: 23, name: "Drone", price: 900, image: "/items/drone.jpg", count: 0 },
     { id: 24, name: "Diamond Ring", price: 50000, image: "/items/ring.jpg", count: 0 },
